@@ -8,7 +8,7 @@ using namespace std::string_view_literals;
 namespace qadmimes {
 
     // Internal constexpr array for the rules. 
-    static constexpr std::array global_magic_rules = {
+    static constexpr MagicRule global_magic_rules[] = {
         // --- IMAGES ---
         MagicRule{0, "\x89PNG\r\n\x1a\n"sv, ""sv, "image/png"sv},
         MagicRule{0, "\xff\xd8\xff"sv, ""sv, "image/jpeg"sv},
@@ -99,7 +99,7 @@ namespace qadmimes {
     };
 
     // Huge extension database from MegaMimes + original fallbacks
-    static constexpr std::array global_extension_rules = {
+    static constexpr ExtensionRule global_extension_rules[] = {
         // --- Core Fallbacks ---
         ExtensionRule{ ".docx"sv, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"sv },
         ExtensionRule{ ".xlsx"sv, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"sv },
