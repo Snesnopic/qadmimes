@@ -93,11 +93,6 @@ namespace qadmimes {
 
     extern const std::span<const MagicRule> global_magic_rules_span = global_magic_rules;
 
-    struct ExtensionRule {
-        std::string_view extension;
-        std::string_view mime;
-    };
-
     // Huge extension database from MegaMimes + original fallbacks
     static constexpr ExtensionRule global_extension_rules[] = {
         // --- Core Fallbacks ---

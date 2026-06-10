@@ -14,11 +14,6 @@ namespace qadmimes {
     static constexpr size_t MIN_RIFF_SIZE = 12;
     static constexpr size_t RIFF_TYPE_OFFSET = 8;
 
-    struct ExtensionRule {
-        std::string_view extension;
-        std::string_view mime;
-    };
-
     // References to the static tables defined in magic_database.cpp
     extern const std::span<const MagicRule> global_magic_rules_span;
     extern const std::span<const ExtensionRule> global_extension_rules_span;

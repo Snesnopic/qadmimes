@@ -23,6 +23,15 @@ namespace qadmimes {
     };
 
     /**
+     * @struct ExtensionRule
+     * @brief Represents a single rule for extension-based detection.
+     */
+    struct ExtensionRule {
+        std::string_view extension; ///< File extension (including dot).
+        std::string_view mime;      ///< Associated MIME type.
+    };
+
+    /**
      * @class MimeDetector
      * @brief High-performance, zero-allocation MIME type detector.
      *
