@@ -97,9 +97,9 @@ jobs:
         with:
           name: ${{ matrix.asset_name }}
           path: |
-            build/bin/qadmimes-cli
-            build/bin/qadmimes-cli.exe
-            build/bin/Release/qadmimes-cli.exe
+            build/bin/qadmimes
+            build/bin/qadmimes.exe
+            build/bin/Release/qadmimes.exe
 
   build-freebsd:
     name: ${{ matrix.asset_name }}
@@ -134,6 +134,6 @@ jobs:
         with:
           name: ${{ matrix.asset_name }}
           path: |
-            build/bin/qadmimes-cli
-            build/bin/qadmimes-cli.exe
-            build/bin/Release/qadmimes-cli.exe
+            build/bin/qadmimes
+            build/bin/qadmimes.exe
+            build/bin/Release/qadmimes.exe
