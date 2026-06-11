@@ -18,7 +18,7 @@ namespace qadmimes {
     extern const std::span<const MagicRule> global_magic_rules_span;
     extern const std::span<const ExtensionRule> global_extension_rules_span;
 
-    std::string_view MimeDetector::sniff_container(std::span<const uint8_t> buffer) {
+    std::string_view MimeDetector::sniff_container(const std::span<const uint8_t> buffer) {
         if (buffer.size() < MIN_ZIP_HEADER_SIZE) {
             return "application/zip";
         }
@@ -75,7 +75,7 @@ namespace qadmimes {
         return "application/zip";
     }
 
-    std::string_view MimeDetector::detect(std::span<const uint8_t> buffer) {
+    std::string_view MimeDetector::detect(const std::span<const uint8_t> buffer) {
         if (buffer.empty()) {
             return "application/octet-stream";
         }
@@ -155,7 +155,7 @@ namespace qadmimes {
         file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
         const auto bytes_read = static_cast<size_t>(file.gcount());
 
-        std::string_view mime = detect(std::span(buffer.data(), bytes_read));
+        const std::string_view mime = detect(std::span(buffer.data(), bytes_read));
 
         // Fallback to extension database if binary sniffing was inconclusive
         if (mime == "application/octet-stream" || mime == "application/zip" || mime == "application/x-ole-storage" || mime == "application/x-riff") {
@@ -164,13 +164,20 @@ namespace qadmimes {
                 return static_cast<char>(std::tolower(char_code));
             });
 
-            for (const auto& rule : global_extension_rules_span) {
-                if (ext == rule.extension) {
-                    return rule.mime;
-                }
+            // binary search with projection
+            const auto it = std::ranges::lower_bound(
+                global_extension_rules_span, 
+                ext, 
+                std::less<>{}, 
+                &ExtensionRule::extension
+            );
+
+            if (it != global_extension_rules_span.end() && it->extension == ext) {
+                return it->mime;
             }
         }
-
+        // this is a false positive, we only ever return data with static storage duration
+        // NOLINTNEXTLINE(return-stack-address)
         return mime;
     }
 

@@ -94,7 +94,7 @@ namespace qadmimes {
     extern const std::span<const MagicRule> global_magic_rules_span = global_magic_rules;
 
     // Huge extension database from MegaMimes + original fallbacks
-    static constexpr ExtensionRule global_extension_rules[] = {
+    static constexpr ExtensionRule raw_extension_rules[] = {
         // --- Core Fallbacks ---
         ExtensionRule{ ".docx"sv, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"sv },
         ExtensionRule{ ".xlsx"sv, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"sv },
@@ -836,6 +836,21 @@ namespace qadmimes {
         ExtensionRule{ ".zip"sv, "application/zip"sv }, // Compressed Archive File
     };
 
+    // Sort array at compile time
+    consteval auto make_sorted_extension_rules() {
+        std::array<ExtensionRule, std::size(raw_extension_rules)> arr{};
+        for (size_t i = 0; i < std::size(raw_extension_rules); ++i) {
+            arr[i] = raw_extension_rules[i];
+        }
+        
+        std::ranges::sort(arr, [](const auto& a, const auto& b) {
+            return a.extension < b.extension;
+        });
+        
+        return arr;
+    }
+
+    static constexpr auto global_extension_rules = make_sorted_extension_rules();
     extern const std::span<const ExtensionRule> global_extension_rules_span = global_extension_rules;
 
 } // namespace qadmimes
