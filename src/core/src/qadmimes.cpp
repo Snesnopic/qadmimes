@@ -77,7 +77,7 @@ namespace qadmimes {
 
     std::string_view MimeDetector::detect(const std::span<const uint8_t> buffer) {
         if (buffer.empty()) {
-            return "application/octet-stream";
+            return std::string_view{};
         }
 
         for (const auto& rule : global_magic_rules_span) {
@@ -142,7 +142,7 @@ namespace qadmimes {
             }
         }
 
-        return "application/octet-stream";
+        return std::string_view{};
     }
 
     std::string_view MimeDetector::detect(const std::filesystem::path& path) {
@@ -158,9 +158,9 @@ namespace qadmimes {
         const std::string_view mime = detect(std::span(buffer.data(), bytes_read));
 
         // Fallback to extension database if binary sniffing was inconclusive
-        if (mime == "application/octet-stream" || mime == "application/zip" || mime == "application/x-ole-storage" || mime == "application/x-riff") {
+        if (mime.empty() || mime == "application/zip" || mime == "application/x-ole-storage" || mime == "application/x-riff") {
             std::string ext = path.extension().string();
-            std::ranges::transform(ext, ext.begin(), [](unsigned char char_code) -> char {
+            std::ranges::transform(ext, ext.begin(), [](const unsigned char char_code) -> char {
                 return static_cast<char>(std::tolower(char_code));
             });
 
@@ -176,6 +176,11 @@ namespace qadmimes {
                 return it->mime;
             }
         }
+        
+        if (mime.empty()) {
+            return "application/octet-stream";
+        }
+
         // this is a false positive, we only ever return data with static storage duration
         // NOLINTNEXTLINE(return-stack-address)
         return mime;
