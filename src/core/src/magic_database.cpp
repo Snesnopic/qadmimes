@@ -216,7 +216,7 @@ namespace qadmimes {
         ExtensionRule{ ".cap"sv, "application/vnd.tcpdump.pcap"sv }, // pcap Packet Capture
         ExtensionRule{ ".cbl"sv, "text/x-cobol"sv }, // COBOL source code
         ExtensionRule{ ".cbor"sv, "application/cbor"sv }, // Concise Binary Object Representation container
-        ExtensionRule{ ".cbz"sv, "application/x-cbr"sv }, // Comic Book Archive
+        ExtensionRule{ ".cbz"sv, "application/zip"sv }, // Comic Book Archive (ZIP)
         ExtensionRule{ ".cca"sv, "application/octet-stream"sv }, // cc:Mail Archive Email Format
         ExtensionRule{ ".cda"sv, "application/x-cdf"sv }, // CD Audio
         ExtensionRule{ ".cdf"sv, "application/x-netcdf"sv }, // netCDF-3 Classic
