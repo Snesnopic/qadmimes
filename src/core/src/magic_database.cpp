@@ -10,6 +10,15 @@ namespace qadmimes {
 
     // Internal constexpr array for the rules. 
     static constexpr MagicRule global_magic_rules[] = {
+        // --- METADATA / SYSTEM ---
+        MagicRule{0, "\x00\x05\x16\x07"sv, ""sv, "application/octet-stream"sv}, // AppleDouble
+        MagicRule{0, "\x00\x05\x16\x00"sv, ""sv, "application/octet-stream"sv}, // AppleSingle
+
+        // --- TEXT / BOM ---
+        MagicRule{0, "\xef\xbb\xbf"sv, ""sv, "text/plain"sv}, // UTF-8 BOM
+        MagicRule{0, "\xff\xfe"sv, ""sv, "text/plain"sv},     // UTF-16 LE BOM
+        MagicRule{0, "\xfe\xff"sv, ""sv, "text/plain"sv},     // UTF-16 BE BOM
+
         // --- IMAGES ---
         MagicRule{0, "\x89PNG\r\n\x1a\n"sv, ""sv, "image/png"sv},
         MagicRule{0, "\xff\xd8\xff"sv, ""sv, "image/jpeg"sv},
@@ -731,6 +740,7 @@ namespace qadmimes {
         ExtensionRule{ ".textile"sv, "text/x-textile"sv }, // Textile
         ExtensionRule{ ".tfw"sv, "text/plain"sv }, // ESRI World File
         ExtensionRule{ ".tfx"sv, "image/tiff"sv }, // Tagged Image File Format for Internet Fax (TIFF-FX)
+        ExtensionRule{ ".tga"sv, "image/x-tga"sv }, // Truevision Targa
         ExtensionRule{ ".thmx"sv, "application/vnd.ms-officetheme"sv }, // Microsoft Office Theme
         ExtensionRule{ ".tif"sv, "image/tiff"sv }, // Tagged Image File Format for Image Technology (TIFF/IT)
         ExtensionRule{ ".tif "sv, "image/tiff"sv }, // Digital Raster Graphic as TIFF
