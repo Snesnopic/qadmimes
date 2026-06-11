@@ -72,6 +72,7 @@ namespace qadmimes {
         
         // --- ARCHIVES ---
         MagicRule{0, "\x1f\x8b"sv, ""sv, "application/gzip"sv},
+        MagicRule{0, "\x04\x22\x4d\x18"sv, ""sv, "application/x-lz4"sv},
         MagicRule{0, "BZh"sv, ""sv, "application/x-bzip2"sv},
         MagicRule{0, "\xfd\x37\x7a\x58\x5a\x00"sv, ""sv, "application/x-xz"sv},
         MagicRule{0, "7z\xbc\xaf\x27\x1c"sv, ""sv, "application/x-7z-compressed"sv},
@@ -98,7 +99,8 @@ namespace qadmimes {
         
         // --- SPECIALIZED ---
         MagicRule{0, "\x06\x06\xed\xf5\xd1\x4a\x1d\x91"sv, ""sv, "application/vnd.fdsn.mseed"sv},
-        MagicRule{0, "SQLite format "sv, ""sv, "application/vnd.sqlite3"sv}
+        MagicRule{0, "SQLite format "sv, ""sv, "application/vnd.sqlite3"sv},
+        MagicRule{0, "\x1bLua"sv, ""sv, "application/x-lua-bytecode"sv},
     };
 
     extern const std::span<const MagicRule> global_magic_rules_span = global_magic_rules;
@@ -135,6 +137,7 @@ namespace qadmimes {
         ExtensionRule{ ".tgz"sv,   "application/gzip"sv },
         ExtensionRule{ ".bz2"sv,   "application/x-bzip2"sv },
         ExtensionRule{ ".xz"sv,    "application/x-xz"sv },
+        ExtensionRule{ ".lz4"sv,   "application/x-lz4"sv },
         ExtensionRule{ ".tar"sv,   "application/x-tar"sv },
         ExtensionRule{ ".wim"sv,   "application/x-ms-wim"sv },
         ExtensionRule{ ".ora"sv,   "image/openraster"sv },
@@ -460,9 +463,11 @@ namespace qadmimes {
         ExtensionRule{ ".lookml"sv, "text/x-yaml"sv }, // LookML
         ExtensionRule{ ".ls"sv, "text/x-livescript"sv }, // LiveScript
         ExtensionRule{ ".lua"sv, "text/x-lua"sv }, // Lua source code
+        ExtensionRule{ ".luac"sv, "application/x-lua-bytecode"sv }, // Lua compiled bytecode
         ExtensionRule{ ".lvproj"sv, "text/xml"sv }, // LabVIEW
         ExtensionRule{ ".lwp"sv, "application/vnd.lotus-wordpro"sv }, // Lotus Word Pro
         ExtensionRule{ ".lz"sv, "application/x-lzip"sv }, // Lzip
+        ExtensionRule{ ".lz4"sv, "application/x-lz4"sv }, // LZ4
         ExtensionRule{ ".lzma"sv, "application/x-lzma"sv }, // LZMA Alone
         ExtensionRule{ ".m"sv, "text/x-objcsrc"sv }, // Objective-C source code
         ExtensionRule{ ".m3"sv, "text/x-modula"sv }, // Modula source code
@@ -844,6 +849,7 @@ namespace qadmimes {
         ExtensionRule{ ".y"sv, "text/x-yacc"sv }, // Yacc/Bison source code
         ExtensionRule{ ".yaml"sv, "text/x-yaml"sv }, // YAML source code
         ExtensionRule{ ".yml"sv, "text/x-yaml"sv }, // YAML
+        ExtensionRule{ ".stl"sv, "model/stl"sv }, // STL 3D Model
         ExtensionRule{ ".zip"sv, "application/zip"sv }, // Compressed Archive File
     };
 
