@@ -2,6 +2,7 @@
 #include <array>
 #include <string_view>
 #include <span>
+#include <algorithm>
 
 using namespace std::string_view_literals;
 
