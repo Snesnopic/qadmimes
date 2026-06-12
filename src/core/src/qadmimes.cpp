@@ -173,7 +173,19 @@ namespace qadmimes {
             );
 
             if (it != global_extension_rules_span.end() && it->extension == ext) {
-                return it->mime;
+                bool conflict = false;
+                if (!mime.empty() && it->mime != mime) {
+                    for (const auto& rule : global_magic_rules_span) {
+                        if (rule.mime == it->mime) {
+                            conflict = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!conflict) {
+                    return it->mime;
+                }
             }
         }
         
