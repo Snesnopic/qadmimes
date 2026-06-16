@@ -8,7 +8,7 @@ namespace fs = std::filesystem;
 
 static void process_single_path(const fs::path& file_path, const bool brief, const bool force_filename) {
     if (!fs::exists(file_path)) {
-        std::cerr << "cannot open '" << file_path.string() << "' (No such file or directory)" << std::endl;
+        std::cerr << "Cannot open '" << file_path.string() << "' (No such file or directory)" << std::endl;
         return;
     }
 
@@ -35,7 +35,7 @@ static void process_single_path(const fs::path& file_path, const bool brief, con
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        std::cout << "Usage: qadmimes-cli [-b] <file_or_dir>..." << std::endl;
+        std::cout << "Usage: qadmimes [-b] <file_or_dir>..." << std::endl;
         return EXIT_FAILURE;
     }
 
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
     }
 
     if (paths.empty()) {
-        std::cout << "Usage: qadmimes-cli [-b] <file_or_dir>..." << std::endl;
+        std::cout << "Usage: qadmimes [-b] <file_or_dir>..." << std::endl;
         return EXIT_FAILURE;
     }
 
