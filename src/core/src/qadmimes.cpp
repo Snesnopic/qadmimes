@@ -137,13 +137,36 @@ namespace qadmimes {
                 }
                 if (rule.mime == "application/x-ole-storage") {
                     const std::string_view view(reinterpret_cast<const char*>(buffer.data()), buffer.size());
-                    if (view.find("WordDocument") != std::string_view::npos) { return "application/msword"; }
-                    if (view.find("Workbook") != std::string_view::npos || view.find("Book") != std::string_view::npos) {
+                    // OLE directory stores stream names as UTF-16LE. Use char arrays to avoid
+                    // hex escape greediness (\x00d would be chr(13) instead of chr(0)+'d').
+                    static constexpr char WORD_W_B[]   = {'W',0,'o',0,'r',0,'d',0,'D',0,'o',0,'c',0,'u',0,'m',0,'e',0,'n',0,'t',0};
+                    static constexpr char WORKBK_W_B[] = {'W',0,'o',0,'r',0,'k',0,'b',0,'o',0,'o',0,'k',0};
+                    static constexpr char BOOK_W_B[]   = {'B',0,'o',0,'o',0,'k',0,0,0};
+                    static constexpr char PPT_W_B[]    = {'P',0,'o',0,'w',0,'e',0,'r',0,'P',0,'o',0,'i',0,'n',0,'t',0,' ',0,'D',0,'o',0,'c',0,'u',0,'m',0,'e',0,'n',0,'t',0};
+                    static constexpr char MSP_W_B[]    = {'M',0,'S',0,'P',0,'r',0,'o',0,'j',0,'e',0,'c',0,'t',0};
+                    static constexpr char MSI_W_B[]    = {'M',0,'S',0,'I',0,' ',0};
+                    static constexpr std::string_view WORD_W   {WORD_W_B,   sizeof WORD_W_B};
+                    static constexpr std::string_view WORKBK_W {WORKBK_W_B, sizeof WORKBK_W_B};
+                    static constexpr std::string_view BOOK_W   {BOOK_W_B,   sizeof BOOK_W_B};
+                    static constexpr std::string_view PPT_W    {PPT_W_B,    sizeof PPT_W_B};
+                    static constexpr std::string_view MSP_W    {MSP_W_B,    sizeof MSP_W_B};
+                    static constexpr std::string_view MSI_W    {MSI_W_B,    sizeof MSI_W_B};
+                    if (view.find(WORD_W) != std::string_view::npos || view.find("WordDocument") != std::string_view::npos) {
+                        return "application/msword";
+                    }
+                    if (view.find(WORKBK_W) != std::string_view::npos || view.find(BOOK_W) != std::string_view::npos
+                        || view.find("Workbook") != std::string_view::npos || view.find("Book") != std::string_view::npos) {
                         return "application/vnd.ms-excel";
                     }
-                    if (view.find("PowerPoint") != std::string_view::npos) { return "application/vnd.ms-powerpoint"; }
-                    if (view.find("MSI ") != std::string_view::npos) { return "application/x-msi"; }
-                    if (view.find("MSProject") != std::string_view::npos) { return "application/vnd.ms-project"; }
+                    if (view.find(PPT_W) != std::string_view::npos || view.find("PowerPoint") != std::string_view::npos) {
+                        return "application/vnd.ms-powerpoint";
+                    }
+                    if (view.find(MSI_W) != std::string_view::npos || view.find("MSI ") != std::string_view::npos) {
+                        return "application/x-msi";
+                    }
+                    if (view.find(MSP_W) != std::string_view::npos || view.find("MSProject") != std::string_view::npos) {
+                        return "application/vnd.ms-project";
+                    }
                     return "application/x-ole-storage";
                 }
                 if (rule.mime == "application/x-riff") {
