@@ -11,8 +11,8 @@ namespace qadmimes {
     // Internal constexpr array for the rules. 
     static constexpr MagicRule global_magic_rules[] = {
         // --- METADATA / SYSTEM ---
-        MagicRule{0, "\x00\x05\x16\x07"sv, ""sv, "application/octet-stream"sv}, // AppleDouble
-        MagicRule{0, "\x00\x05\x16\x00"sv, ""sv, "application/octet-stream"sv}, // AppleSingle
+        MagicRule{0, "\x00\x05\x16\x07"sv, ""sv, "multipart/appledouble"sv}, // AppleDouble
+        MagicRule{0, "\x00\x05\x16\x00"sv, ""sv, "application/applefile"sv}, // AppleSingle
 
         // --- TEXT / BOM ---
         MagicRule{0, "\xef\xbb\xbf"sv, ""sv, "text/plain"sv}, // UTF-8 BOM
