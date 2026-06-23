@@ -107,6 +107,27 @@ namespace qadmimes {
         MagicRule{0, "\x06\x06\xed\xf5\xd1\x4a\x1d\x91"sv, ""sv, "application/vnd.fdsn.mseed"sv},
         MagicRule{0, "SQLite format "sv, ""sv, "application/vnd.sqlite3"sv},
         MagicRule{0, "\x1bLua"sv, ""sv, "application/x-lua-bytecode"sv},
+        MagicRule{0, "\x89\x48\x44\x46\x0d\x0a\x1a\x0a"sv, ""sv, "application/x-hdf5"sv}, // HDF5
+        MagicRule{0, "glTF"sv, ""sv, "model/gltf-binary"sv},
+        MagicRule{0, "\x42\x50\x47\xfb"sv, ""sv, "image/bpg"sv},
+        MagicRule{0, "SDPX"sv, ""sv, "image/x-dpx"sv},
+        MagicRule{0, "XPDS"sv, ""sv, "image/x-dpx"sv},
+        MagicRule{0, "gimp xcf"sv, ""sv, "image/x-xcf"sv},
+        MagicRule{0, "\x8a\x4d\x4e\x47\x0d\x0a\x1a\x0a"sv, ""sv, "video/x-mng"sv},
+        MagicRule{0, "\x8b\x4a\x4e\x47\x0d\x0a\x1a\x0a"sv, ""sv, "image/x-jng"sv},
+        MagicRule{0, "\x37\x7a\xbc\xaf\x27\x1c"sv, ""sv, "application/x-7z-compressed"sv}, // duplicate of 7z for robustness
+        MagicRule{0, "xar!"sv, ""sv, "application/x-xar"sv},
+        MagicRule{0, "\x37\xff\x4b\x44"sv, ""sv, "audio/x-wavpack"sv}, // WavPack correction file
+        MagicRule{0, "LZIP"sv, ""sv, "application/x-lzip"sv},
+        MagicRule{0, "\xff\x06\x00\x00sNaPpY"sv, ""sv, "application/x-snappy-framed"sv},
+        MagicRule{0, "\xd9\xd9\xf7"sv, ""sv, "application/cbor"sv},
+        MagicRule{0, "FUJIFILMCCD-RAW"sv, ""sv, "image/x-fuji-raf"sv},
+        MagicRule{0, "II\x2a\x00\x10\x00\x00\x00CR"sv, ""sv, "image/x-canon-cr2"sv},
+        MagicRule{0, "\x06\x0e\x2b\x34\x02\x05\x01\x01\x0d\x01\x02\x01\x01\x02"sv, ""sv, "application/mxf"sv},
+        MagicRule{0, "WARC/"sv, ""sv, "application/warc"sv},
+        MagicRule{0, "d8:announce"sv, ""sv, "application/x-bittorrent"sv},
+        MagicRule{0, "d4:info"sv, ""sv, "application/x-bittorrent"sv},
+        MagicRule{0, "\x02\x64\x13\x00\x00\x00\x00\x00"sv, ""sv, "application/x-lrzip"sv},
     };
 
     extern const std::span<const MagicRule> global_magic_rules_span = global_magic_rules;
