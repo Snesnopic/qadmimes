@@ -51,8 +51,14 @@ namespace qadmimes {
         MagicRule{0, "TTA1"sv, ""sv, "audio/x-tta"sv},
         MagicRule{0, "DSD "sv, ""sv, "audio/x-dsf"sv},
         MagicRule{0, "FRM8"sv, ""sv, "audio/x-dff"sv},
+        MagicRule{0, "MPCK"sv, ""sv, "audio/x-musepack"sv}, // Musepack SV8
         MagicRule{0, "MP+\x07"sv, ""sv, "audio/x-musepack"sv},
         MagicRule{0, "MP+"sv, ""sv, "audio/x-musepack"sv},
+        MagicRule{0, "MThd"sv, ""sv, "audio/midi"sv},
+        MagicRule{0, "FORM"sv, ""sv, "audio/x-aiff"sv},
+        MagicRule{0, ".snd"sv, ""sv, "audio/basic"sv},
+        MagicRule{0, "#!AMR"sv, ""sv, "audio/amr"sv},
+        MagicRule{0, "ADIF"sv, ""sv, "audio/x-hx-aac-adif"sv},
         
         // --- VIDEO / CONTAINERS ---
         MagicRule{0, "\x1a\x45\xdf\xa3"sv, ""sv, "video/x-matroska"sv},
