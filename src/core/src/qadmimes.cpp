@@ -18,6 +18,30 @@ namespace qadmimes {
     extern const std::span<const MagicRule> global_magic_rules_span;
     extern const std::span<const ExtensionRule> global_extension_rules_span;
 
+    static std::string_view sniff_isobmff(const std::span<const uint8_t> buffer) {
+        if (buffer.size() < 12) return "video/mp4";
+        const char* brand = reinterpret_cast<const char*>(buffer.data() + 8);
+
+        if (std::memcmp(brand, "3g2", 3) == 0) return "video/3gpp2";
+        if (std::memcmp(brand, "3gp", 3) == 0) return "video/3gpp";
+        if (std::memcmp(brand, "M4A ", 4) == 0) return "audio/x-m4a";
+        if (std::memcmp(brand, "M4B ", 4) == 0) return "audio/mp4";
+        if (std::memcmp(brand, "M4V ", 4) == 0) return "video/x-m4v";
+        if (std::memcmp(brand, "qt  ", 4) == 0) return "video/quicktime";
+        if (std::memcmp(brand, "mqt ", 4) == 0) return "video/quicktime";
+        if (std::memcmp(brand, "heic", 4) == 0) return "image/heic";
+        if (std::memcmp(brand, "heis", 4) == 0) return "image/heic";
+        if (std::memcmp(brand, "heim", 4) == 0) return "image/heic";
+        if (std::memcmp(brand, "heix", 4) == 0) return "image/heic";
+        if (std::memcmp(brand, "hevc", 4) == 0) return "image/heic-sequence";
+        if (std::memcmp(brand, "hevx", 4) == 0) return "image/heic-sequence";
+        if (std::memcmp(brand, "mif1", 4) == 0) return "image/heif";
+        if (std::memcmp(brand, "avif", 4) == 0) return "image/avif";
+        if (std::memcmp(brand, "avis", 4) == 0) return "image/avif";
+        if (std::memcmp(brand, "f4v ", 4) == 0) return "video/x-f4v";
+        return "video/mp4";
+    }
+
     std::string_view MimeDetector::sniff_container(const std::span<const uint8_t> buffer) {
         if (buffer.size() < MIN_ZIP_HEADER_SIZE) {
             return "application/zip";
@@ -107,6 +131,9 @@ namespace qadmimes {
                 // Handle complex container formats that require deeper sniffing
                 if (rule.mime == "application/zip") {
                     return sniff_container(buffer);
+                }
+                if (rule.mime == "video/iso.base-media") {
+                    return sniff_isobmff(buffer);
                 }
                 if (rule.mime == "application/x-ole-storage") {
                     const std::string_view view(reinterpret_cast<const char*>(buffer.data()), buffer.size());

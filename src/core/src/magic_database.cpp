@@ -62,7 +62,7 @@ namespace qadmimes {
         
         // --- VIDEO / CONTAINERS ---
         MagicRule{0, "\x1a\x45\xdf\xa3"sv, ""sv, "video/x-matroska"sv},
-        MagicRule{4, "ftyp"sv, ""sv, "video/mp4"sv},
+        MagicRule{4, "ftyp"sv, ""sv, "video/iso.base-media"sv}, // sentinel: brand checked in sniff_isobmff
         MagicRule{0, "\x30\x26\xb2\x75\x8e\x66\xcf\x11"sv, ""sv, "video/x-ms-asf"sv}, 
         MagicRule{0, "FLV\x01"sv, ""sv, "video/x-flv"sv},
         MagicRule{0, "CWS"sv, ""sv, "application/x-shockwave-flash"sv},
@@ -156,7 +156,21 @@ namespace qadmimes {
         ExtensionRule{ ".xml"sv,   "application/xml"sv },
         ExtensionRule{ ".vcf"sv,   "text/vcard"sv },
         ExtensionRule{ ".mp3"sv,   "audio/mpeg"sv },
-        ExtensionRule{ ".m4a"sv,   "video/mp4"sv },
+        ExtensionRule{ ".m4a"sv,   "audio/x-m4a"sv },
+        ExtensionRule{ ".m4b"sv,   "audio/mp4"sv },
+        ExtensionRule{ ".m4v"sv,   "video/x-m4v"sv },
+        ExtensionRule{ ".mov"sv,   "video/quicktime"sv },
+        ExtensionRule{ ".qt"sv,    "video/quicktime"sv },
+        ExtensionRule{ ".heic"sv,  "image/heic"sv },
+        ExtensionRule{ ".heif"sv,  "image/heif"sv },
+        ExtensionRule{ ".avif"sv,  "image/avif"sv },
+        ExtensionRule{ ".3g2"sv,   "video/3gpp2"sv },
+        ExtensionRule{ ".3gp"sv,   "video/3gpp"sv },
+        ExtensionRule{ ".midi"sv,  "audio/midi"sv },
+        ExtensionRule{ ".aif"sv,   "audio/x-aiff"sv },
+        ExtensionRule{ ".aiff"sv,  "audio/x-aiff"sv },
+        ExtensionRule{ ".hdf5"sv,  "application/x-hdf5"sv },
+        ExtensionRule{ ".h5"sv,    "application/x-hdf5"sv },
         ExtensionRule{ ".mp4"sv,   "video/mp4"sv },
         ExtensionRule{ ".zip"sv,   "application/zip"sv },
                 // --- Absorbed from MegaMimes ---
