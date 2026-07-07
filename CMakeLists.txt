@@ -26,6 +26,7 @@ target_include_directories(qadmimes-core PUBLIC src/core/include)
 
 add_executable(qadmimes src/cli/main.cpp)
 target_link_libraries(qadmimes PRIVATE qadmimes-core)
+target_compile_definitions(qadmimes PRIVATE QADMIMES_VERSION="${PROJECT_VERSION}")
 
 include(GNUInstallDirs)
 install(TARGETS qadmimes DESTINATION ${CMAKE_INSTALL_BINDIR})

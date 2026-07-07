@@ -6,6 +6,10 @@
 
 namespace fs = std::filesystem;
 
+static void print_usage() {
+    std::cout << "Usage: qadmimes [-b] <file_or_dir>..." << std::endl;
+}
+
 static void process_single_path(const fs::path& file_path, const bool brief, const bool force_filename) {
     if (!fs::exists(file_path)) {
         std::cerr << "Cannot open '" << file_path.string() << "' (No such file or directory)" << std::endl;
@@ -35,7 +39,7 @@ static void process_single_path(const fs::path& file_path, const bool brief, con
 
 int main(int argc, char** argv) {
     if (argc < 2) {
-        std::cout << "Usage: qadmimes [-b] <file_or_dir>..." << std::endl;
+        print_usage();
         return EXIT_FAILURE;
     }
 
@@ -44,7 +48,13 @@ int main(int argc, char** argv) {
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
-        if (arg == "-b" || arg == "--brief") {
+        if (arg == "--version") {
+            std::cout << QADMIMES_VERSION << std::endl;
+            return EXIT_SUCCESS;
+        } else if (arg == "-h" || arg == "--help") {
+            print_usage();
+            return EXIT_SUCCESS;
+        } else if (arg == "-b" || arg == "--brief") {
             brief = true;
         } else {
             paths.push_back(arg);
@@ -52,7 +62,7 @@ int main(int argc, char** argv) {
     }
 
     if (paths.empty()) {
-        std::cout << "Usage: qadmimes [-b] <file_or_dir>..." << std::endl;
+        print_usage();
         return EXIT_FAILURE;
     }
 
