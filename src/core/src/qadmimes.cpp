@@ -42,6 +42,49 @@ namespace qadmimes {
         return "video/mp4";
     }
 
+    // Length of the MPEG audio frame whose header starts at `at`, or 0 if there is no valid header there
+    static size_t mpeg_audio_frame_length(const std::span<const uint8_t> buffer, const size_t at) {
+        static constexpr unsigned BITRATES[2][3][15] = {
+            {{0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448},  // MPEG-1 layer I
+             {0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384},     // MPEG-1 layer II
+             {0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320}},     // MPEG-1 layer III
+            {{0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256},     // MPEG-2/2.5 layer I
+             {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160},          // MPEG-2/2.5 layer II
+             {0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160}}};        // MPEG-2/2.5 layer III
+        static constexpr unsigned SAMPLE_RATES[3] = {44100, 48000, 32000};
+
+        if (at + 4 > buffer.size() || buffer[at] != 0xff || (buffer[at + 1] & 0xe0) != 0xe0) {
+            return 0;
+        }
+        const unsigned version = (buffer[at + 1] >> 3) & 3; // 0: MPEG-2.5, 1: reserved, 2: MPEG-2, 3: MPEG-1
+        const unsigned layer = (buffer[at + 1] >> 1) & 3;   // 0: reserved, 1: III, 2: II, 3: I
+        const unsigned bitrate_index = buffer[at + 2] >> 4;
+        const unsigned rate_index = (buffer[at + 2] >> 2) & 3;
+        const unsigned padding = (buffer[at + 2] >> 1) & 1;
+        // free format (bitrate index 0) has no computable length and is left to the extension
+        if (version == 1 || layer == 0 || bitrate_index == 0 || bitrate_index == 15 || rate_index == 3) {
+            return 0;
+        }
+
+        const unsigned bitrate = BITRATES[version == 3 ? 0 : 1][3 - layer][bitrate_index] * 1000;
+        const unsigned sample_rate = SAMPLE_RATES[rate_index] >> (version == 3 ? 0 : version == 2 ? 1 : 2);
+        if (layer == 3) {
+            return (12 * bitrate / sample_rate + padding) * 4;
+        }
+        const unsigned samples = (layer == 1 && version != 3) ? 72 : 144;
+        return samples * bitrate / sample_rate + padding;
+    }
+
+    // Validates an MPEG audio stream without ID3: a well-formed frame header, followed by another
+    // one when the buffer is long enough to hold it
+    static bool sniff_mpeg_audio(const std::span<const uint8_t> buffer) {
+        const size_t length = mpeg_audio_frame_length(buffer, 0);
+        if (length == 0) {
+            return false;
+        }
+        return length + 4 > buffer.size() || mpeg_audio_frame_length(buffer, length) != 0;
+    }
+
     std::string_view MimeDetector::sniff_container(const std::span<const uint8_t> buffer) {
         if (buffer.size() < MIN_ZIP_HEADER_SIZE) {
             return "application/zip";
@@ -124,6 +167,10 @@ namespace qadmimes {
                         match = false;
                         break;
                     }
+                }
+                // a 12-bit frame sync alone matches any data starting with 0xFFFx
+                if (match && rule.mime == "audio/mpeg" && !sniff_mpeg_audio(buffer)) {
+                    match = false;
                 }
             }
 
