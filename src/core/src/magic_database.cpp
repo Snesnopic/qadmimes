@@ -25,6 +25,7 @@ namespace qadmimes {
         MagicRule{0, "\xff\xd8\xff"sv, ""sv, "image/jpeg"sv},
         MagicRule{0, "GIF87a"sv, ""sv, "image/gif"sv},
         MagicRule{0, "GIF89a"sv, ""sv, "image/gif"sv},
+        MagicRule{0, "8BPS"sv, ""sv, "image/vnd.adobe.photoshop"sv}, // psd and psb
         MagicRule{0, "RIFF"sv, ""sv, "application/x-riff"sv}, 
         MagicRule{0, "BM"sv, ""sv, "image/bmp"sv},
         MagicRule{0, "\x00\x00\x01\x00"sv, ""sv, "image/x-icon"sv},
