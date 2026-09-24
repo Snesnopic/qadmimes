@@ -15,6 +15,7 @@ namespace qadmimes {
         MagicRule{0, "\x00\x05\x16\x00"sv, ""sv, "application/applefile"sv}, // AppleSingle
 
         // --- TEXT / BOM ---
+        MagicRule{0, "\xef\xbb\xbf" "BEGIN:VCARD"sv, "\xff\xff\xff\xdf\xdf\xdf\xdf\xdf\xff\xdf\xdf\xdf\xdf\xdf"sv, "text/vcard"sv}, // vCard after a UTF-8 BOM
         MagicRule{0, "\xef\xbb\xbf"sv, ""sv, "text/plain"sv}, // UTF-8 BOM
         MagicRule{0, "\xff\xfe"sv, ""sv, "text/plain"sv},     // UTF-16 LE BOM
         MagicRule{0, "\xfe\xff"sv, ""sv, "text/plain"sv},     // UTF-16 BE BOM
@@ -74,7 +75,8 @@ namespace qadmimes {
         MagicRule{0, "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1"sv, ""sv, "application/x-ole-storage"sv},
         MagicRule{0, "<?xml"sv, ""sv, "application/xml"sv}, 
         MagicRule{0, "{\""sv, ""sv, "application/json"sv},
-        MagicRule{0, "vCard"sv, ""sv, "text/vcard"sv},
+        // vCard properties are case-insensitive: the mask clears the letters' case bit
+        MagicRule{0, "BEGIN:VCARD"sv, "\xdf\xdf\xdf\xdf\xdf\xff\xdf\xdf\xdf\xdf\xdf"sv, "text/vcard"sv},
         
         // --- ARCHIVES ---
         MagicRule{0, "\x1f\x8b"sv, ""sv, "application/gzip"sv},
