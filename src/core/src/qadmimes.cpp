@@ -174,6 +174,10 @@ namespace qadmimes {
             }
         }
         if (offset > 0) {
+            // some taggers leave zero padding outside the tag's declared size
+            while (offset < buffer.size() && buffer[offset] == 0) {
+                ++offset;
+            }
             const std::string_view inner = match_rules(buffer.subspan(offset));
             return fronted_by_id3(inner) ? inner : "audio/mpeg";
         }
@@ -301,6 +305,12 @@ namespace qadmimes {
             length = id3v2_length(std::span(header.data(), static_cast<size_t>(file.gcount())));
         }
         if (offset > 0) {
+            file.clear();
+            file.seekg(static_cast<std::streamoff>(offset));
+            // some taggers leave zero padding outside the tag's declared size
+            for (int c = file.get(); c == 0; c = file.get()) {
+                ++offset;
+            }
             file.clear();
             file.seekg(static_cast<std::streamoff>(offset));
             file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
