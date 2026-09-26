@@ -61,6 +61,13 @@ namespace qadmimes {
 
     private:
         /**
+         * @brief Matches the magic rules against the start of a buffer, without skipping ID3v2 tags.
+         * @param buffer The input buffer.
+         * @return The detected MIME type, or an empty view if no rule matches.
+         */
+        static std::string_view match_rules(std::span<const uint8_t> buffer);
+
+        /**
          * @brief Internal helper to sniff container formats (ZIP, etc.).
          * @param buffer The input buffer.
          * @return The specific MIME type if identified, otherwise a generic container type.

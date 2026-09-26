@@ -85,6 +85,29 @@ namespace qadmimes {
         return length + 4 > buffer.size() || mpeg_audio_frame_length(buffer, length) != 0;
     }
 
+    // Length of the ID3v2 tag at the start of the buffer, footer included, or 0 if there is none
+    static size_t id3v2_length(const std::span<const uint8_t> buffer) {
+        if (buffer.size() < 10 || std::memcmp(buffer.data(), "ID3", 3) != 0 || buffer[3] < 2 || buffer[3] > 4 ||
+            buffer[4] == 0xff) {
+            return 0;
+        }
+        size_t size = 0;
+        for (size_t i = 6; i < 10; ++i) {
+            if (buffer[i] & 0x80) {
+                return 0;
+            }
+            size = (size << 7) | buffer[i];
+        }
+        const bool footer = buffer[3] == 4 && (buffer[5] & 0x10) != 0;
+        return 10 + size + (footer ? 10 : 0);
+    }
+
+    // Audio formats that can carry an ID3v2 tag in front of their own header: the tag doesn't make them MPEG audio
+    static bool fronted_by_id3(const std::string_view mime) {
+        return mime == "audio/flac" || mime == "audio/x-ape" || mime == "audio/x-wavpack" || mime == "audio/x-tta" ||
+               mime == "audio/x-musepack";
+    }
+
     std::string_view MimeDetector::sniff_container(const std::span<const uint8_t> buffer) {
         if (buffer.size() < MIN_ZIP_HEADER_SIZE) {
             return "application/zip";
@@ -143,6 +166,21 @@ namespace qadmimes {
     }
 
     std::string_view MimeDetector::detect(const std::span<const uint8_t> buffer) {
+        size_t offset = 0;
+        while (const size_t length = id3v2_length(buffer.subspan(offset))) {
+            offset += length;
+            if (offset >= buffer.size()) {
+                return "audio/mpeg";
+            }
+        }
+        if (offset > 0) {
+            const std::string_view inner = match_rules(buffer.subspan(offset));
+            return fronted_by_id3(inner) ? inner : "audio/mpeg";
+        }
+        return match_rules(buffer);
+    }
+
+    std::string_view MimeDetector::match_rules(const std::span<const uint8_t> buffer) {
         if (buffer.empty()) {
             return std::string_view{};
         }
@@ -250,7 +288,26 @@ namespace qadmimes {
 
         std::array<uint8_t, READ_BUFFER_SIZE> buffer{}; 
         file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
-        const auto bytes_read = static_cast<size_t>(file.gcount());
+        auto bytes_read = static_cast<size_t>(file.gcount());
+
+        // a cover makes an ID3v2 tag longer than the buffer: read what follows the tags from the file
+        size_t offset = 0;
+        for (size_t length = id3v2_length(std::span(buffer.data(), bytes_read)); length != 0;) {
+            offset += length;
+            std::array<uint8_t, 10> header{};
+            file.clear();
+            file.seekg(static_cast<std::streamoff>(offset));
+            file.read(reinterpret_cast<char*>(header.data()), header.size());
+            length = id3v2_length(std::span(header.data(), static_cast<size_t>(file.gcount())));
+        }
+        if (offset > 0) {
+            file.clear();
+            file.seekg(static_cast<std::streamoff>(offset));
+            file.read(reinterpret_cast<char*>(buffer.data()), buffer.size());
+            bytes_read = static_cast<size_t>(file.gcount());
+            const std::string_view inner = match_rules(std::span(buffer.data(), bytes_read));
+            return fronted_by_id3(inner) ? inner : "audio/mpeg";
+        }
 
         const std::string_view mime = detect(std::span(buffer.data(), bytes_read));
 
